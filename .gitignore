@@ -1,3 +1,5 @@
+### Whatever the file names, keeping here, that would be not tracked by Git. Like a local copy of those files
+
 
 .terraform
 .terraform.lock.hcl
