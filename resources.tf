@@ -19,7 +19,7 @@ terraform {
   backend "s3" {
     bucket = var.bucketname
     key    = "EC2/ec2.tfstate"
-    region = "ap-south-1"
+    region = "var.region"
     access_key = var.accesskey
     secret_key = var.secretkey
     dynamodb_table = "tf-s3-local-table"
