@@ -4,6 +4,7 @@
 terraform.tfvars
 provider.tf
 terraform.tfstate
+*.tfstate.backup
 *.tfvars
 *.log
 
