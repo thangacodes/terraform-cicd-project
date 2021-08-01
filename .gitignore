@@ -1,0 +1,10 @@
+## Whichever files we'd like to not to update with GIT, we can keep those name files here.
+
+.terraform
+.terraform.lock.hcl
+terraform.tfvars
+provider.tf
+terraform.tfstate
+*.tfvars
+*.log
+
