@@ -31,6 +31,3 @@ variable "tower" {
 variable "mail" {
   type = string
 }
-variable "bucketname" {
-  type = string
-}
