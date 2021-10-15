@@ -12,18 +12,6 @@ pipeline {
                 sh 'terraform init'
             }
         }
-        stage("Terraform Formatt"){
-            steps{
-                echo "going to rewrite Terraform configuration files to a canonical format and style"
-                sh 'terraform fmt'
-            }
-        }
-        stage("Terraform Validate"){
-            steps{
-                echo "going to validates the configuration files in a directory"
-                sh 'terraform validate'
-            }
-        }
         stage("Terraform Plan"){
             steps{
                 echo "going to evaluates a Terraform configuration to determine the desired state of all the resources it declares"
