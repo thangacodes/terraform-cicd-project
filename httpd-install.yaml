@@ -1,0 +1,26 @@
+## Ansible playbook to install apache on remote nodes and service starting
+
+---
+  - name: Installing apache on remote nodes to configure Java application
+    hosts: all
+    remote_user: ec2-user
+    become: yes
+    become_method: sudo
+    tasks:
+      - name: First installing httpd package on remote nodes using yum module
+        yum: 
+          name: httpd
+          state: present
+      - name: Second step is to starting the httpd service on remote nodes
+        service:
+          name: httpd
+          state: started
+      - name: Third copying the index.html file to destination path using copy module
+        copy:
+          src: /home/centos/remote-local-provisioner/index.html
+          dest: /var/www/html/index.html
+      - name: Fourth is to restarting httpd services, due to changes happen in the config directory
+        service:
+          name: httpd
+          state: restarted
+...
