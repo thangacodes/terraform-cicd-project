@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Code Checkout') {
             steps{
-                git branch: 'main', credentialsId: '77f45d28-6802-4968-a123-0bc5db63066b', url: 'https://github.com/send2durai/terraform-cicd-project.git'
+                git branch: 'main', url: 'https://github.com/send2durai/terraform-cicd-project.git'
             }
         }
         stage ("Terraform Init") {
