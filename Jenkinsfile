@@ -31,6 +31,12 @@ pipeline {
             sh 'terraform validate'
         }
     }
+    stage('Going to apply'){
+        steps{
+            echo "Terraform apply will be executed"
+            sh 'terraform apply --auto-approve'
+        }
+    }
     stage ('Going to end of the jenkins pipeline'){
         steps{
             echo "Happy Coding"
