@@ -14,7 +14,7 @@ resource "aws_instance" "demo-remote" {
         host = self.public_ip
         user = "ec2-user"
         password = ""
-        private_key =file ("ondot.pem")
+        private_key =file ("./ondot.pem")
       }
     
   }
