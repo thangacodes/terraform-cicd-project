@@ -5,6 +5,8 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('jenkins-aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key-id')
     }
+    
+    stages{
     stage('Git checkouts'){
         steps{
             echo "Going to clone the github repository"
@@ -34,4 +36,5 @@ pipeline {
             echo "Happy Coding"
         }
     }
+}
 }
