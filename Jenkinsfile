@@ -1,39 +1,37 @@
 pipeline {
     agent any
-    stages {
-        stage('Code Checkout') {
-            steps{
-                git branch: 'main', url: 'https://github.com/send2durai/terraform-cicd-project.git'
-            }
-        }
-        stage ("Terraform Init") {
-            steps {
-                echo "going to initialize the terraform module and download the required plugin"
-                sh 'terraform init'
-            }
-        }
-        stage("Terraform Plan"){
-            steps{
-                echo "going to evaluates a Terraform configuration to determine the desired state of all the resources it declares"
-                sh 'terraform plan'
-            }
-        }
-        stage("Terraform Apply"){
-            steps{
-                echo "going to executes the actions proposed in terraform plan"
-                sh 'terraform apply --auto-approve'
-            }
+
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('jenkins-aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key-id')
+    }
+    stage('Git checkouts'){
+        steps{
+            echo "Going to clone the github repository"
+            git branch: 'main', url: 'https://github.com/send2durai/terraform-cicd-project.git'
         }
     }
-    post {
-        always {
-            echo "Going to send out an Job Notifications"
+    stage ('Going to initialize terraform plugin w.r.t aws provider'){
+        steps{
+            echo "Executing Terraform init command"
+            sh 'terraform init'
         }
-        failure {
-            slackSend channel: 'devops', message: 'Hey DevOps Team  #########  Jenkins Pipeline Job is Failure  #########'
+    }
+    stage ('Going to format the terraform code'){
+        steps{
+            echo "Executing Terraform fmt command"
+            sh 'terraform fmt'
         }
-        success {
-            slackSend channel: 'devops', message: 'Hey DevOps Team  #########  Jenkins Pipeline Job is Succeed  #########'
+    }
+    stage ('Going to validate the terraform code'){
+        steps{
+            echo "Executing Terraform validate the code that we written"
+            sh 'terraform validate'
+        }
+    }
+    stage ('Going to end of the jenkins pipeline'){
+        steps{
+            echo "Happy Coding"
         }
     }
 }
