@@ -1,40 +1,63 @@
 pipeline {
     agent any
+    tools {
+        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
+    }
 
     environment {
-        AWS_ACCESS_KEY_ID = credentials('jenkins-aws-access-key-id')
-        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key-id')
+        TF_INPUT = "0"
+        TF_IN_AUTOMATION = "TRUE"
+        TF_LOG = "WARN"
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
     }
-    
-    stages{
-    stage('Git checkouts'){
-        steps{
-            echo "Going to clone the github repository"
-            git branch: 'main', url: 'https://github.com/send2durai/terraform-cicd-project.git'
+
+    stages {
+        stage('TerraformInit'){
+            steps {
+                sh 'cd ansible-notes/Iac_Scripts/EC2-components/Jenkinsfile'
+                    sh 'terraform --version'
+                    sh 'terraform init'
+                }
+            }
         }
-    }
-    stage ('Going to initialize terraform plugin w.r.t aws provider'){
-        steps{
-            echo "Executing Terraform init command"
-            sh 'terraform init'
-        }
-    }
-    stage ('Going to format the terraform code'){
-        steps{
-            echo "Executing Terraform fmt command"
-            sh 'terraform fmt'
-        }
-    }
-    stage ('Going to validate the terraform code'){
-        steps{
-            echo "Executing Terraform validate the code that we written"
-            sh 'terraform validate'
-        }
-    }
-    stage ('Going to end of the jenkins pipeline'){
-        steps{
-            echo "Happy Coding"
-        }
-    }
-}
-}
+        stage('TerraformValidate'){
+            steps {
+                sh 'cd ansible-notes/Iac_Scripts/EC2-components/Jenkinsfile'
+                sh 'terraform validate'
+                }
+            }
+        stage('TerraformPlan'){
+            steps {
+                sh 'cd ansible-notes/Iac_Scripts/EC2-components/Jenkinsfile'
+                    script {
+                        try {
+                           sh 'terraform plan'
+                        } catch (err) {
+                            sh 'terraform plan'
+                        }
+            }
+		}
+      }
+        stage('TerraformApply'){
+            steps {
+                script{
+                    def apply = false
+                    try {
+                        input message: 'confirm apply', ok: 'Apply Config'
+                        apply = true
+                    } 
+      					catch (err) {
+                        apply = false
+                        sh 'cd ansible-notes/Iac_Scripts/EC2-components/Jenkinsfile'
+                        sh 'terraform destroy -auto-approve'
+                        }
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                    if(apply){
+                        sh 'cd ansible-notes/Iac_Scripts/EC2-components/Jenkinsfile'
+                        sh 'terraform apply --auto-approve'
+                        }
+                }
+            }
+	}
